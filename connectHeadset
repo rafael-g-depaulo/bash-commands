@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# taken from https://medium.com/@linuxdevhub/how-to-bluetooth-device-auto-connect-after-ubuntu-login-b4f9c2e2551d
+
+HEADSET_ADDR="${1:-60:F4:3A:DE:5E:4D}"
+
+# bluetoothctl
+# sleep 2
+echo "connect $HEADSET_ADDR" | bluetoothctl &> /dev/null
+# sleep 4
+# echo "connect $HEADSET_ADDR" | bluetoothctl
+exit
+
