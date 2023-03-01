@@ -16,3 +16,4 @@ cp -a "~/Downloads/$ZIP_NAME/." ~/.fonts
 
 # reset font cache
 fc-cache ~/.fonts
+
