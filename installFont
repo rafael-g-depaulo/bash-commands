@@ -3,17 +3,24 @@
 DEFAULT_FONT="https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/FiraCode.zip"
 URL=${1:-"$DEFAULT_FONT"}
 
+ORIGINAL_PWD=$(pwd)
+mkdir -p ~/Downloads
+cd ~/Downloads
+
 ZIP_NAME="$(date +%F)-font"
-mkdir -p "~/Downloads/$ZIP_NAME"
-curl $URL --output "~/Downloads/$ZIP_NAME.zip"
-unzip "~Downloads/$ZIP_NAME.zip" -d "~/Downloads/$ZIP_NAME"
+mkdir -p "$ZIP_NAME"
+curl $URL --output "$ZIP_NAME.zip"
+unzip "$ZIP_NAME.zip" -d "$ZIP_NAME"
 
 # delete all non-font files
-find "~/Downloads/$ZIP_NAME" -type f -not -name "*.ttf" -delete
+find "$ZIP_NAME" -type f -not -name "*.ttf" -delete
 
 # copy font files to ~/.fonts/
-cp -a "~/Downloads/$ZIP_NAME/." ~/.fonts
+cp -a "$ZIP_NAME/." ~/.fonts
 
 # reset font cache
 fc-cache ~/.fonts
+
+# return to original pwd 
+cd $ORIGINAL_PWD
 
