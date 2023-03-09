@@ -9,7 +9,7 @@ cd ~/Downloads
 
 ZIP_NAME="$(date +%F)-font"
 mkdir -p "$ZIP_NAME"
-curl $URL --output "$ZIP_NAME.zip"
+wget -O "$ZIP_NAME.zip" $URL 
 unzip "$ZIP_NAME.zip" -d "$ZIP_NAME"
 
 # delete all non-font files
