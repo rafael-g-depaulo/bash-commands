@@ -1,5 +1,8 @@
 #!/bin/bash
 
-ggpull $@
-ggpush $@
+# ggpull
+git pull origin $(current_branch) $@
+
+# ggpush
+git push origin $(current_branch)
 
