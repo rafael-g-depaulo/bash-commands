@@ -1,0 +1,22 @@
+#!/bin/bash
+
+FOLDERS=$(echo "commands,setup,dotfiles" | tr ',' '\n')
+
+for folder in $FOLDERS; do
+(
+  cd "$HOME/$folder"
+
+  if gitHasChanges; then
+    REPO_HAS_CHANGES="true"
+    git stash push --include-untracked -m "temp" &> /dev/null
+    echo "You have uncommitted changes in $folder"
+  fi
+
+  ggsync &> /dev/null
+
+  if [ "$REPO_HAS_CHANGES" = "true" ]; then
+    git stash pop &> /dev/null
+  fi
+)
+done
+
