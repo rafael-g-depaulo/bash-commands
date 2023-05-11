@@ -3,7 +3,7 @@
 # get ssh algorythm
 ALGS=`echo "rsa ed25519 ed25519-sk dsa ecdsa ecdsa-sk" | tr " " "\n"`
 DEFAULT_ALG=rsa
-SSH_KEY_ALG=`fzf <<< "$ALGS" || echo $DEFAULT_ALG`
+SSH_KEY_ALG=$(fzf <<< "$ALGS" || echo $DEFAULT_ALG)
 
 # get password
 echo '(Enter for no password)'
