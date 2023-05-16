@@ -20,31 +20,6 @@ LOAD_STATE_LOADING="Loading"
 LOAD_STATE_DONE="Done"
 LOAD_STATE_ERR="Error"
 
-# spin() {
-# SPINNER_CHARS=('⠁' '⠂' '⠄' '⡀' '⢀' '⠠' '⠐' '⠈')
-#   WAIT=0.1
-#   TEXT=$1
-#   LEVEL=${2-:0}
-# 
-#   while [ 1 ]; do
-#     for spin_char in "${SPINNER_CHARS[@]}"; do
-#       # print $LEVEL number of \n
-#       # printf '\n%.0s' {0..$LEVEL}
-#       for i in {1..$LEVEL}; do
-#         echo ""
-#       done
-# 
-#       echo -ne "\r\e[32m$spin_char\e[0m $TEXT"
-#       sleep $WAIT
-# 
-#       for i in {1..$LEVEL}; do
-#         tput cuu1
-#       done
-# 
-#     done
-#   done
-# }
-
 loading_frame() {
   TEXT=$1
   STATE=$2
@@ -60,11 +35,15 @@ loading_frame() {
   fi
 }
 
-load_ok() {
-  echo $LOAD_STATE_DONE > $1
+get_proccess_state() {
+  FILE_ID=$1
+  echo "$BASE_LOAD_PATH/$FILE_ID-STATE"
 }
-load_error() {
-  echo $LOAD_STATE_ERR > $1
+
+set_load_state() {
+  FILE_ID=$1
+  LOAD_STATE=$2
+  echo $LOAD_STATE > (get_proccess_state $FILE_ID)
 }
 
 BASE_LOAD_PATH="/tmp/spinner"
@@ -74,10 +53,18 @@ load() {
   COMMAND_TO_LOAD=$1
   FRAME=0
   LOADING_ID=$2
-  LOAD_STATE_FILE="$BASE_LOAD_PATH/$LOADING_ID"
+  LOAD_STATE_FILE="$BASE_LOAD_PATH/$LOADING_ID-STATE"
 
+  # run command
+  ($COMMAND_TO_LOAD &&
+    set_load_state $ID $LOAD_STATE_DONE ||
+    set_load_state $ID $LOAD_STATE_ERR
+  ) &
+
+  # set loading state
   echo $LOAD_STATE_LOADING > $LOAD_STATE_FILE
 
+  # untill all processes finish, show loading status for all of them
   while [ 1 ]; do
     loading_frame "abc RUN" $(cat $LOAD_STATE_FILE) $FRAME
     FRAME=$(($FRAME + 1))
@@ -88,7 +75,6 @@ load() {
 
     sleep 0.2
   done
-
 }
 
 # loading_frame "test 1" $1 &
@@ -96,9 +82,7 @@ load() {
 # echo "" &
 # spin "test 2" 2
 
-# run command
 ID=$(echo $RANDOM | md5sum | head -c 15)
 COMMAND_TO_LOAD="sleep 4"
-($COMMAND_TO_LOAD && load_ok $ID || load_error $ID) &
 load $COMMAND_TO_LOAD $ID
 

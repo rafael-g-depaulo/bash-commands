@@ -2,9 +2,13 @@
 
 FOLDERS=$(echo "commands,setup,dotfiles" | tr ',' '\n')
 
-for folder in $FOLDERS; do
-(
-  cd "$HOME/$folder"
+function syncRepo() {
+  cd "$HOME/$1"
+
+  pwd
+  echo "hi from $1"
+
+  # TODO: handle git errors (merge conflicts, stuff)
 
   if gitHasChanges; then
     REPO_HAS_CHANGES="true"
@@ -12,11 +16,15 @@ for folder in $FOLDERS; do
     echo "You have uncommitted changes in $folder"
   fi
 
+  # ggsync &> /dev/null &
   ggsync &> /dev/null
 
   if [ "$REPO_HAS_CHANGES" = "true" ]; then
     git stash pop &> /dev/null
   fi
-)
+}
+
+for folder in $FOLDERS; do
+(syncRepo $folder) &
 done
 
