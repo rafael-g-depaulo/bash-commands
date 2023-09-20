@@ -1,0 +1,9 @@
+#!/bin/bash
+
+wget "https://discord.com/api/download?platform=linux&format=deb" -O discord.deb
+# make sure apt user can read the .deb file
+sudo chown -Rv _apt:root ./discord.deb
+sudo chmod 700 _apt:root ./discord.deb
+sudo apt install ./discord.deb
+
+sudo rm ./discord.deb
