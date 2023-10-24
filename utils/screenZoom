@@ -28,5 +28,5 @@ echo "Focused monitor: $focused_monitor. Scale: ${monitor_scales[$focused_monito
 # set new scale
 xrandr --output "$focused_monitor" --scale $new_scale
 # make sure that my main screen is positioned correctly
-leftMonitorWidth=$(bc <<<"${new_scale}*$windowWidth")
+leftMonitorWidth=$((bc <<<"${new_scale}*$windowWidth") | awk '{ print int($1)}')
 xrandr --output "$rightMonitorName" --pos ${leftMonitorWidth}x0
