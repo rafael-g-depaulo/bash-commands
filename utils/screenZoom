@@ -26,10 +26,13 @@ new_scale=$(bc <<<"${monitor_scales[$focused_monitor]}$zoomSign$zoomStep")
 
 echo "Focused monitor: $focused_monitor. Scale: ${monitor_scales[$focused_monitor]} -> $new_scale (+$zoomStep)" >> "$logs_file"
 
+# update scale
+monitor_scales[$focused_monitor]=$new_scale
+
 # set new scale
 xrandr --output "$focused_monitor" --scale $new_scale
 # make sure that my main screen is positioned correctly
-leftMonitorWidth=$((bc <<<"${new_scale}*$windowWidth") | awk '{ print int($1) }')
+leftMonitorWidth=$((bc <<<"${monitor_scales[$leftMonitorName]}*$windowWidth") | awk '{ print int($1) }')
 echo "New Monitor Width: $leftMonitorWidth" >> "$logs_file"
 echo "---------------------------------------" >> "$logs_file"
 xrandr --output "$rightMonitorName" --pos ${leftMonitorWidth}x0
