@@ -24,7 +24,7 @@ focused_monitor=$(i3-msg -t get_workspaces | jq -r '.[] | select(.focused) | .ou
 
 new_scale=$(bc <<<"${monitor_scales[$focused_monitor]}$zoomSign$zoomStep")
 
-echo "Focused monitor: $focused_monitor. Scale: ${monitor_scales[$focused_monitor]} -> $new_scale (+$zoomStep)" >> "$logs_file"
+echo "Focused monitor: $focused_monitor. Scale: ${monitor_scales[$focused_monitor]} -> $new_scale (+$zoomStep)" >>"$logs_file"
 
 # update scale
 monitor_scales[$focused_monitor]=$new_scale
@@ -32,7 +32,14 @@ monitor_scales[$focused_monitor]=$new_scale
 # set new scale
 xrandr --output "$focused_monitor" --scale $new_scale
 # make sure that my main screen is positioned correctly
-leftMonitorWidth=$((bc <<<"${monitor_scales[$leftMonitorName]}*$windowWidth") | awk '{ print int($1) }')
-echo "New Monitor Width: $leftMonitorWidth" >> "$logs_file"
-echo "---------------------------------------" >> "$logs_file"
+leftMonitorWidth=$( (bc <<<"${monitor_scales[$leftMonitorName]}*$windowWidth") | awk '{ print int($1) }')
+
+# make sure right monitor is positioned correctly
 xrandr --output "$rightMonitorName" --pos ${leftMonitorWidth}x0
+
+# focus on current monitor
+i3-msg focus output $focused_monitor &>/dev/null
+
+# logs
+echo "New Monitor Width: $leftMonitorWidth" >>"$logs_file"
+echo "---------------------------------------" >>"$logs_file"
